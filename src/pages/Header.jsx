@@ -135,7 +135,7 @@ const Header = () => {
               <FaUserCircle className="text-3xl text-gray-600" />
             )}
             <span className="font-medium text-gray-700 hidden sm:block">
-              Welcome {user?.name || "User"}
+              WELCOME {user?.name?.toUpperCase() || "User"}
             </span>
           </button>
 

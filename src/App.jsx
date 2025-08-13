@@ -11,6 +11,7 @@ import Roles from './pages/Roles';
 import UsersPage from './pages/UsersPage';
 import ChangePassword from './pages/ChangePassword';
 import ForgotPassword from './pages/ForgotPassword';
+import RoleDetails from './pages/RoleDetails';
 
 const App = () => {
 
@@ -35,6 +36,8 @@ const App = () => {
        <Route path="signup" element={<Signup />} />
        <Route path="users" element={<UsersPage />} />
        <Route path="change-password" element={<ChangePassword />} />
+      <Route path="rolesdetail/:id" element={<RoleDetails />} />
+
       </Route>
       <Route path="/" element={<Home />} />
     </Routes>

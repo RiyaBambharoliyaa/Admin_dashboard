@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { FaTrashAlt, FaEdit } from "react-icons/fa"; // Icons
 
 const API_BASE = "https://examination-backend-wn5h.onrender.com/api";
 
@@ -15,14 +16,12 @@ const UsersPage = () => {
     phone: "",
     role: "",
     qualification: "",
-    technologies: ""
+    technologies: "",
   });
 
   const navigate = useNavigate();
 
-  // Fetch users
-  useEffect(()=>{
-    const fetchUsers = async () => {
+  const fetchUsers = async () => {
     try {
       const token = localStorage.getItem("accessToken");
       const res = await axios.get(`${API_BASE}/auth/users`, {
@@ -50,21 +49,18 @@ const UsersPage = () => {
       setLoading(false);
     }
   };
-  fetchUsers()
-  },[users])
 
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
-  // Delete user
   const handleDeleteUser = async (userId) => {
     if (!userId) {
       console.error("Delete failed: userId is missing");
       return;
     }
 
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this user?"
-    );
-    if (!confirmDelete) return;
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
 
     try {
       const token = localStorage.getItem("accessToken");
@@ -85,7 +81,6 @@ const UsersPage = () => {
     }
   };
 
-  // Open edit modal
   const handleEditUser = (user) => {
     setEditForm({
       userId: user.userId,
@@ -96,29 +91,32 @@ const UsersPage = () => {
       qualification: user.qualification,
       technologies: Array.isArray(user.technologies)
         ? user.technologies.join(", ")
-        : user.technologies || ""
+        : user.technologies || "",
     });
     setShowEditModal(true);
   };
 
-  // Update user
   const handleUpdateUser = async (e) => {
     e.preventDefault();
 
     try {
       const token = localStorage.getItem("accessToken");
 
-      await axios.put(`${API_BASE}/auth/update-profile`, {
-        ...editForm,
-        technologies: editForm.technologies
-          .split(",")
-          .map((tech) => tech.trim())
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+      await axios.put(
+        `${API_BASE}/auth/update-profile`,
+        {
+          ...editForm,
+          technologies: editForm.technologies
+            .split(",")
+            .map((tech) => tech.trim()),
         },
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       alert("User updated successfully");
       setShowEditModal(false);
@@ -129,117 +127,88 @@ const UsersPage = () => {
     }
   };
 
-
-
-  if (loading) return <p>Loading users...</p>;
+  if (loading) return <p className="text-center py-6">Loading users...</p>;
 
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Users List</h2>
+    <div className="p-4 max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+        <h2 className="text-lg sm:text-xl font-bold">Users List</h2>
         <button
-          className="bg-gray-500  text-white px-3 py-1 rounded-2xl"
+          className="bg-gray-500 text-white px-4 py-2 rounded-lg sm:w-auto hover:bg-gray-600"
           onClick={() => navigate("/admin/signup")}
         >
-        + Add User
+          + Add User
         </button>
       </div>
 
+      {/* Table */}
       {users.length === 0 ? (
-        <p>No users found.</p>
+        <p className="text-center">No users found.</p>
       ) : (
-        <table className="w-full border border-gray-300">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="border p-2">Name</th>
-              <th className="border p-2">Email</th>
-              <th className="border p-2">Phone</th>
-              <th className="border p-2">Role</th>
-              <th className="border p-2">Qualification</th>
-              <th className="border p-2">Technologies</th>
-              <th className="border p-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((u) => (
-              <tr key={u.userId}>
-                <td className="border p-2">{u.name}</td>
-                <td className="border p-2">{u.email}</td>
-                <td className="border p-2">{u.phone}</td>
-                <td className="border p-2">{u.role}</td>
-                <td className="border p-2">{u.qualification}</td>
-                <td className="border p-2">{u.technologies?.toString()}</td>
-                <td className="border p-2">
-                  <button
-                    className="bg-red-800 text-white px-3 py-1 rounded mx-2"
-                    onClick={() => handleDeleteUser(u.userId)}
-                  >
-                    Delete
-                  </button>
-                  <button
-                    className="bg-green-900 text-white px-3 py-1 rounded"
-                    onClick={() => handleEditUser(u)}
-                  >
-                    Edit
-                  </button>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full border border-gray-300 text-sm sm:text-base">
+            <thead>
+              <tr className="bg-gray-200">
+                <th className="border p-2">Name</th>
+                <th className="border p-2">Email</th>
+                <th className="border p-2">Phone</th>
+                <th className="border p-2">Role</th>
+                <th className="border p-2">Qualification</th>
+                <th className="border p-2">Technologies</th>
+                <th className="border p-2 text-center">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {users.map((u) => (
+                <tr key={u.userId}>
+                  <td className="border p-2">{u.name}</td>
+                  <td className="border p-2">{u.email}</td>
+                  <td className="border p-2">{u.phone}</td>
+                  <td className="border p-2">{u.role}</td>
+                  <td className="border p-2">{u.qualification}</td>
+                  <td className="border p-2">{u.technologies?.toString()}</td>
+                  <td className="border p-2">
+                    <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
+                      <FaEdit
+                        className="text-green-600 cursor-pointer hover:text-green-800 transition-colors duration-200"
+                        size={16} // smaller on mobile
+                        onClick={() => handleEditUser(u)}
+                      />
+                      <FaTrashAlt
+                        className="text-red-600 cursor-pointer hover:text-red-800 transition-colors duration-200"
+                        size={16}
+                        onClick={() => handleDeleteUser(u.userId)}
+                      />
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
-      {/* Edit User Modal */}
+      {/* Edit Modal */}
       {showEditModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded w-96">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-50">
+          <div className="bg-white p-6 rounded w-full max-w-lg shadow-lg">
             <h3 className="text-lg font-bold mb-4">Edit User</h3>
-            <form onSubmit={handleUpdateUser}>
-              <input
-                type="text"
-                placeholder="Name"
-                value={editForm.name}
-                onChange={(e) =>
-                  setEditForm({ ...editForm, name: e.target.value })
-                }
-                className="border p-2 w-full mb-2"
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                value={editForm.email}
-                onChange={(e) =>
-                  setEditForm({ ...editForm, email: e.target.value })
-                }
-                className="border p-2 w-full mb-2"
-              />
-              <input
-                type="text"
-                placeholder="Phone"
-                value={editForm.phone}
-                onChange={(e) =>
-                  setEditForm({ ...editForm, phone: e.target.value })
-                }
-                className="border p-2 w-full mb-2"
-              />
-              <input
-                type="text"
-                placeholder="Role"
-                value={editForm.role}
-                onChange={(e) =>
-                  setEditForm({ ...editForm, role: e.target.value })
-                }
-                className="border p-2 w-full mb-2"
-              />
-              <input
-                type="text"
-                placeholder="Qualification"
-                value={editForm.qualification}
-                onChange={(e) =>
-                  setEditForm({ ...editForm, qualification: e.target.value })
-                }
-                className="border p-2 w-full mb-2"
-              />
+            <form onSubmit={handleUpdateUser} className="space-y-3">
+              {["name", "email", "phone", "role", "qualification"].map(
+                (field) => (
+                  <input
+                    key={field}
+                    type="text"
+                    placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+                    value={editForm[field]}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, [field]: e.target.value })
+                    }
+                    className="border p-2 w-full rounded"
+                  />
+                )
+              )}
               <input
                 type="text"
                 placeholder="Technologies (comma separated)"
@@ -247,19 +216,19 @@ const UsersPage = () => {
                 onChange={(e) =>
                   setEditForm({ ...editForm, technologies: e.target.value })
                 }
-                className="border p-2 w-full mb-4"
+                className="border p-2 w-full rounded"
               />
-              <div className="flex justify-end">
+              <div className="flex flex-col sm:flex-row justify-end gap-2 mt-4">
                 <button
                   type="button"
                   onClick={() => setShowEditModal(false)}
-                  className="bg-gray-400 text-white px-3 py-1 rounded mr-2"
+                  className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-blue-600 text-white px-3 py-1 rounded"
+                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
                 >
                   Update
                 </button>

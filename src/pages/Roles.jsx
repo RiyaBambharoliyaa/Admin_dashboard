@@ -1,266 +1,8 @@
-// // src/pages/Roles.jsx
-// import React, { useEffect, useState } from 'react';
-// import axios from 'axios';
-// import { useSelector } from 'react-redux'; // get token from Redux
-
-// const Roles = () => {
-//   const [roles, setRoles] = useState([]);
-//   const [loading, setLoading] = useState(true);
-
-//   const { token } = useSelector((state) => state.auth); // get token from auth slice
-
-//   const fetchRoles = async () => {
-//     try {
-//       const res = await axios.get(
-//         'https://examination-backend-wn5h.onrender.com/api/get-roles',
-//         {
-//           headers: {
-//             Authorization: `Bearer ${token}`, // ✅ send token
-//           },
-//         }
-//       );
-
-//       console.log('Roles response:', res.data);
-// setRoles(res.data?.data?.roles || []);
-//     } catch (error) {
-//       console.error('Failed to fetch roles:', error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchRoles();
-//   }, []);
-
-//   return (
-//     <div className="p-6">
-//       <div className="flex justify-between items-center mb-6">
-//         <h2 className="text-2xl font-bold">Roles</h2>
-//         <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-//           + Create Role
-//         </button>
-//       </div>
-
-//       {loading ? (
-//         <p>Loading roles...</p>
-//       ) : roles.length === 0 ? (
-//         <p>No roles found.</p>
-//       ) : (
-//         <table className="w-full border-collapse border">
-//           <thead>
-//             <tr className="bg-gray-100 text-left">
-//               <th className="border p-2">Role Name</th>
-//               <th className="border p-2">Actions</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {roles.map((role) => (
-//               <tr key={role._id}>
-//                 <td className="border p-2">{role.name}</td>
-//                 <td className="border p-2">
-//                   <button className="text-green-600 mr-3 hover:underline">Edit</button>
-//                   <button className="text-red-600 hover:underline">Delete</button>
-//                 </td>
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default Roles;
-
-
-
-// import React, { useEffect, useState } from 'react';
-// import axios from 'axios';
-// import { useSelector } from 'react-redux';
-
-// const Roles = () => {
-//   const [roles, setRoles] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [showModal, setShowModal] = useState(false);
-//   const [form, setForm] = useState({ name: '', description: '' });
-
-//   const { token } = useSelector((state) => state.auth);
-
-//   const fetchRoles = async () => {
-//     try {
-//       const res = await axios.get(
-//         'https://examination-backend-wn5h.onrender.com/api/get-roles',
-//         {
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//           },
-//         }
-//       );
-//       setRoles(res.data?.data?.roles || []);
-//     } catch (error) {
-//       console.error('Failed to fetch roles:', error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const createRole = async () => {
-//     try {
-//       const res = await axios.post(
-//         'https://examination-backend-wn5h.onrender.com/api/roles',
-//         form,
-//         {
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//             'Content-Type': 'application/json',
-//           },
-//         }
-//       );
-//       console.log('Role created:', res.data);
-//       setForm({ name: '', description: '' });
-//       setShowModal(false);
-//       fetchRoles(); // refresh role list
-//     } catch (error) {
-//       console.error('Failed to create role:', error);
-//     }
-//   };
-
-//   const handleInputChange = (e) => {
-//     setForm({ ...form, [e.target.name]: e.target.value });
-//   };
-
-
-  
-//   const deleteRole = async (id) => {
-//     const confirm = window.confirm('Are you sure you want to delete this role?');
-//     if (!confirm) return;
-
-//     try {
-//       await axios.delete(`https://examination-backend-wn5h.onrender.com/api/roles/${id}`, {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
-//       });
-
-//       // Refresh role list after deletion
-//       setRoles((prev) => prev.filter((role) => role._id !== id));
-//     } catch (error) {
-//       console.error('Failed to delete role:', error);
-//       alert('Error deleting role');
-//     }
-//   };
-
-  
-//   useEffect(() => {
-//     fetchRoles();
-//   }, []);
-
-//   return (
-//     <div className="p-6">
-//       <div className="flex justify-between items-center mb-6">
-//         <h2 className="text-2xl font-bold">Roles</h2>
-//         <button
-//           onClick={() => setShowModal(true)}
-//           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-//         >
-//           + Add New Role
-//         </button>
-//       </div>
-
-//       {loading ? (
-//         <p>Loading roles...</p>
-//       ) : roles.length === 0 ? (
-//         <p>No roles found.</p>
-//       ) : (
-//         <table className="w-full border-collapse border">
-//           <thead>
-//             <tr className="bg-gray-100 text-left">
-//               <th className="border p-2">Role Name</th>
-//               <th className="border p-2">Actions</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {roles.map((role) => (
-//               <tr key={role._id}>
-//                 <td className="border p-2">{role.name}</td>
-//                 <td className="border p-2">
-//                   {/* <button className="text-green-600 mr-3 hover:underline">Edit</button> */}
-//                   <button
-//                     onClick={() => openEditModal(role)}
-//                     className="text-green-600 mr-3 hover:underline"
-//                   >
-//                     Edit
-//                   </button>
-//                   {/* <button className="text-red-600 hover:underline">Delete</button> */}
-//                         <button
-//                     onClick={() => deleteRole(role._id)}
-//                     className="text-red-600 hover:underline"
-//                   >
-//                     Delete
-//                   </button>
-//                 </td>
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       )}
-
-//       {/* Modal */}
-//       {showModal && (
-//         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-//           <div className="bg-white p-6 rounded-md w-full max-w-md shadow-lg">
-//             <h3 className="text-xl font-bold mb-4">Create Role</h3>
-
-//             <div className="mb-4">
-//               <label className="block mb-1 font-medium">Role Name</label>
-//               <input
-//                 type="text"
-//                 name="name"
-//                 value={form.name}
-//                 onChange={handleInputChange}
-//                 placeholder="Enter role name"
-//                 className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200"
-//               />
-//             </div>
-
-//             <div className="mb-4">
-//               <label className="block mb-1 font-medium">Description</label>
-//               <textarea
-//                 name="description"
-//                 value={form.description}
-//                 onChange={handleInputChange}
-//                 placeholder="Enter role description"
-//                 className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200"
-//               />
-//             </div>
-
-//             <div className="flex justify-end gap-3">
-//               <button
-//                 onClick={() => setShowModal(false)}
-//                 className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded"
-//               >
-//                 Cancel
-//               </button>
-//               <button
-//                 onClick={createRole}
-//                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-//               >
-//                 Add Role
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default Roles;
-
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import { FaEdit, FaTrash } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Roles = () => {
   const [roles, setRoles] = useState([]);
@@ -268,13 +10,14 @@ const Roles = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [currentRole, setCurrentRole] = useState(null);
-  const [editForm, setEditForm] = useState({ name: '', description: '' });
-  const [addForm, setAddForm] = useState({ name: '', description: '' });
+  const [editForm, setEditForm] = useState({ name: "", description: "" });
+  const [addForm, setAddForm] = useState({ name: "", description: "" });
 
   const reduxToken = useSelector((state) => state.auth.token);
-  const token = reduxToken || localStorage.getItem('token');
+  const token = reduxToken || localStorage.getItem("token");
 
-  const API_BASE = 'https://examination-backend-wn5h.onrender.com/api';
+  const API_BASE = "https://examination-backend-wn5h.onrender.com/api";
+  const navigate = useNavigate();
 
   const fetchRoles = async () => {
     setLoading(true);
@@ -284,22 +27,22 @@ const Roles = () => {
       });
       setRoles(res.data?.data?.roles || []);
     } catch (error) {
-      console.error('Failed to fetch roles:', error);
+      console.error("Failed to fetch roles:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const deleteRole = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this role?')) return;
+    if (!window.confirm("Are you sure you want to delete this role?")) return;
     try {
       await axios.delete(`${API_BASE}/roles/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setRoles((prev) => prev.filter((r) => r._id !== id));
     } catch (error) {
-      console.error('Error deleting role:', error);
-      alert('Failed to delete role');
+      console.error("Error deleting role:", error);
+      alert("Failed to delete role");
     }
   };
 
@@ -324,20 +67,21 @@ const Roles = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      // Use the updated role from API response
       const updatedRole = res?.data?.updatedRole || editForm;
       setRoles((prev) =>
-        prev.map((r) => (r._id === currentRole._id ? { ...r, ...updatedRole } : r))
+        prev.map((r) =>
+          r._id === currentRole._id ? { ...r, ...updatedRole } : r
+        )
       );
       setEditModalOpen(false);
     } catch (error) {
-      console.error('Error updating role:', error);
-      alert('Failed to update role');
+      console.error("Error updating role:", error);
+      alert("Failed to update role");
     }
   };
 
   const openAddModal = () => {
-    setAddForm({ name: '', description: '' });
+    setAddForm({ name: "", description: "" });
     setAddModalOpen(true);
   };
 
@@ -356,8 +100,8 @@ const Roles = () => {
       setRoles((prev) => [...prev, newRole]);
       setAddModalOpen(false);
     } catch (error) {
-      console.error('Error adding role:', error);
-      alert('Failed to add role');
+      console.error("Error adding role:", error);
+      alert("Failed to add role");
     }
   };
 
@@ -383,39 +127,58 @@ const Roles = () => {
       ) : roles.length === 0 ? (
         <p>No roles found.</p>
       ) : (
-        <table className="w-full border-collapse border">
-          <thead>
-            <tr className="bg-gray-100 text-left">
-              <th className="border p-2">Role Name</th>
-              <th className="border p-2">Description</th>
-              <th className="border p-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {roles.map((role) => (
-              <tr key={role._id}>
-                <td className="border p-2">{role.name}</td>
-                <td className="border p-2">{role.description}</td>
-                <td className="border p-2">
-                  <button
-                    type="button"
-                    onClick={() => openEditModal(role)}
-                    className="text-green-600 mr-3 hover:underline"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => deleteRole(role._id)}
-                    className="text-red-600 hover:underline"
-                  >
-                    Delete
-                  </button>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse border min-w-[600px]">
+            <thead>
+              <tr className="bg-gray-100 text-left">
+                <th className="border p-2">Role Name</th>
+                <th className="border p-2">Description</th>
+                <th className="border p-2 text-center">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {roles.map((role) => (
+                <tr
+                  key={role._id}
+                  className="hover:bg-gray-300 cursor-pointer"
+                >
+                  <td
+                    className="border p-2"
+                    onClick={() => navigate(`/admin/rolesdetail/${role._id}`)}
+                  >
+                    {role.name}
+                  </td>
+                  <td
+                    className="border p-2"
+                    onClick={() => navigate(`/admin/rolesdetail/${role._id}`)}
+                    >
+                    {role.description}
+                  </td>
+                  <td className="border p-2 text-center">
+                    <div className="flex flex-wrap justify-center items-center gap-3">
+                      <FaEdit
+                        className="text-green-600 cursor-pointer hover:text-green-800"
+                        size={18}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openEditModal(role);
+                        }}
+                      />
+                      <FaTrash
+                        className="text-red-600 cursor-pointer hover:text-red-800"
+                        size={18}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteRole(role._id);
+                        }}
+                      />
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
       {/* Edit Modal */}
