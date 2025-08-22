@@ -12,6 +12,8 @@ import UsersPage from './pages/UsersPage';
 import ChangePassword from './pages/ChangePassword';
 import ForgotPassword from './pages/ForgotPassword';
 import RoleDetails from './pages/RoleDetails';
+import Unothorized from './pages/Unothorized';
+import Profile from './pages/Profile';
 
 const App = () => {
 
@@ -21,7 +23,8 @@ const App = () => {
       {/* <Route path="/signup" element={<Signup />} /> */}
       <Route path="/login" element={<Login />} />
       <Route path='/forgot-password' element={<ForgotPassword/>}/>
-      <Route
+      <Route path='/unothorizes' element={<Unothorized/>}/>
+       <Route 
         path="/admin"
         element={
           <ProtectedRoute adminOnly={true}>
@@ -31,16 +34,23 @@ const App = () => {
       >
         <Route index element={<Dashboard />} />
         <Route path="dashboard" element={<Dashboard />} />
+        <Route path='profile' element={<Profile/>}/>
         <Route path="analytics" element={<Analytics />} />
         <Route path="roles" element={<Roles />} />
        <Route path="signup" element={<Signup />} />
        <Route path="users" element={<UsersPage />} />
        <Route path="change-password" element={<ChangePassword />} />
       <Route path="rolesdetail/:id" element={<RoleDetails />} />
-
       </Route>
-      <Route path="/" element={<Home />} />
-    </Routes>
+
+ <Route path="/"
+        element={
+          <ProtectedRoute userOnly={true}>
+            <Home />
+          </ProtectedRoute>
+        }
+      /> 
+        </Routes>
   );
 };
 

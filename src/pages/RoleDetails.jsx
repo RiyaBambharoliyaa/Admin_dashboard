@@ -25,6 +25,7 @@ const RoleDetails = () => {
     }
   };
 
+  
   // Fetch Permissions for this Role
   const fetchPermissions = async () => {
     try {

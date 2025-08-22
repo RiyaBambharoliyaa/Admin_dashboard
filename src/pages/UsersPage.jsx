@@ -53,6 +53,7 @@ const UsersPage = () => {
   useEffect(() => {
     fetchUsers();
   }, []);
+console.log(users);
 
   const handleDeleteUser = async (userId) => {
     if (!userId) {

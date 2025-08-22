@@ -33,7 +33,7 @@ const AdminLayout = () => {
         className={`bg-gray-800 text-white flex flex-col transition-all duration-300 w-64`}
       >
         {/* Top Section with Hamburger */}
-        <div className="p-4 flex items-center justify-between border-b border-gray-700">
+        <div className="p-7 flex items-center justify-between border-b border-gray-700">
           <h1 className="text-lg font-bold">Admin Panel</h1>
           <button
             onClick={() => setCollapsed(!collapsed)}
