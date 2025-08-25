@@ -17,7 +17,10 @@ export const loginUser = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       const res = await axios.post(`${BASE_URL}/api/auth/login`, payload);
+      console.log(res.data);
+      
       localStorage.setItem("user", JSON.stringify(res.data.data.user));
+
       localStorage.setItem("accessToken", res.data.data.accessToken);
       return { user: res.data.data.user, accessToken: res.data.data.accessToken };
     } catch (err) {
@@ -31,6 +34,8 @@ export const registerUser = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       const res = await axios.post(`${BASE_URL}/api/auth/signup`, payload);
+      // console.log(res);
+      
       return res.data.message;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Signup failed");
